@@ -128,3 +128,46 @@ func TestRemoveGeneric(t *testing.T) {
 		})
 	}
 }
+
+func TestTrimRemove(t *testing.T) {
+	tests := []struct {
+		name     string
+		slice    slice.Slicer[int]
+		index    int
+		expected slice.Slicer[int]
+	}{
+		{
+			name:     "正常情况",
+			slice:    slice.Slicer[int]{1, 2, 3, 4, 5},
+			index:    2,
+			expected: slice.Slicer[int]{1, 2, 4, 5},
+		},
+		{
+			name:     "删除第一个元素",
+			slice:    slice.Slicer[int]{1, 2, 3, 4, 5},
+			index:    0,
+			expected: slice.Slicer[int]{2, 3, 4, 5},
+		},
+		{
+			name:     "删除最后一个元素",
+			slice:    slice.Slicer[int]{1, 2, 3, 4, 5},
+			index:    4,
+			expected: slice.Slicer[int]{1, 2, 3, 4},
+		},
+		{
+			name:     "超出索引范围",
+			slice:    slice.Slicer[int]{1, 2, 3, 4, 5},
+			index:    10,
+			expected: slice.Slicer[int]{1, 2, 3, 4, 5}, // 没有改变
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			got := slice.TrimRemove(tt.slice, tt.index)
+			if !reflect.DeepEqual(got, tt.expected) {
+				t.Errorf("期望得到 %v, 但是得到 %v", tt.expected, got)
+			}
+		})
+	}
+}
